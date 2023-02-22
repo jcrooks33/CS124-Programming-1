@@ -1,0 +1,11 @@
+randmst: prim.o heap.o
+	g++ prim.o heap.o -o randmst
+
+prim.o: prim.cpp
+	g++ -std=gnu++11 -c prim.cpp
+
+heap.o: heap.cpp heap.hpp
+	g++ -c heap.cpp
+
+clean:
+	rm *.o randmst
