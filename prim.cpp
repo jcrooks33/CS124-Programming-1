@@ -134,7 +134,7 @@ float Trials(int n, int trials, int dim) {
 
             sum += PrimAlg(x, y, z, q, n, dim);
         }
-        if (dim == 3) {
+        else if (dim == 3) {
             float x[n];
             float y[n];
             float z[n];
@@ -147,7 +147,7 @@ float Trials(int n, int trials, int dim) {
 
             sum += PrimAlg(x, y, z, q, n, dim);
         }
-        else {
+        else if (dim == 4){
             float x[n];
             float y[n];
             float z[n];
