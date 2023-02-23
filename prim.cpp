@@ -34,7 +34,7 @@
 
                 add w and its distance to our heap
 */ 
-float Prim(float *x, float *y, float *z, float *q, int n, int dim) {
+float primalg(float *x, float *y, float *z, float *q, int n, int dim) {
     //make our variables
     float dist[n];
     int prev[n];
@@ -42,7 +42,7 @@ float Prim(float *x, float *y, float *z, float *q, int n, int dim) {
     float mstweight = 0.0;
     int visited[n];
 
-    // we compute the optimal children value for the heap as well
+    // child value for heap
     int childval = n/8;
     if (n == 131072) {
         childval = n/16;
@@ -51,7 +51,7 @@ float Prim(float *x, float *y, float *z, float *q, int n, int dim) {
 
     for (int i = 1; i < n; i++) {
 
-        // initialize all the vertices to not visited
+        // not visited
         visited[i] = 0;
 
         // make value large enough to be larger than coords
@@ -109,73 +109,6 @@ float Prim(float *x, float *y, float *z, float *q, int n, int dim) {
     return mstweight;
 }
 
-
-float primtrials(int n, int trials, int dim) {
-    srand((unsigned)time(NULL));
-    float mstweight = 0.0;
-    for (int i = 0; i < trials; i++) {
-        if (dim == 0) {
-            // no use to store coordinates, can compute on the fly
-            float x[1];
-            float y[1];
-            float z[1];
-            float v[1];
-
-            mstweight += Prim(x, y, z, v, n, dim);
-        }
-
-        if (dim == 2) {
-            float x[n];
-            float y[n];
-            float z[1];
-            float q[1];
-
-            // initialize 2D coordinates
-            for (int a = 0; a < n; a++) {
-                x[a] = (float)rand() / RAND_MAX;
-                y[a] = (float)rand() / RAND_MAX;
-            }
-
-            mstweight += Prim(x, y, z, q, n, dim);
-
-        }
-
-        else if (dim == 3) {
-            float x[n];
-            float y[n];
-            float z[n];
-            float q[1];
-
-            // initialize 3D coordinates
-            for (int a = 0; a < n; a++) {
-                x[a] = (float)rand() / RAND_MAX;
-                y[a] = (float)rand() / RAND_MAX;
-                q[a] = (float)rand() / RAND_MAX;
-            }
-
-            mstweight += Prim(x, y, z, q, n, dim);
-        }
-
-        else if (dim == 4) {
-            float x[n];
-            float y[n];
-            float z[n];
-            float q[n];
-
-            // initialize 4D coordinates
-            for (int a = 0; a < n; a++) {
-                x[a] = (float)rand() / RAND_MAX;
-                y[a] = (float)rand() / RAND_MAX;
-                z[a] = (float)rand() / RAND_MAX;
-                q[a] = (float)rand() / RAND_MAX;
-            }
-
-            mstweight += Prim(x, y, z, q, n, dim);
-        }
-    }
-    return mstweight;
-}
-
 int main(int argc, const char * argv[]) {
 
     if (argc != 5) {
@@ -188,10 +121,70 @@ int main(int argc, const char * argv[]) {
     int trials = atoi(argv[3]);
     int dim = atoi(argv[4]);
 
-    //run prims
-    float mstweight = primtrials(n, trials, dim);
+    // our random number depends on our seed, if we make our seed time, then over time our seed should change to give us enough randomness
+    srand((unsigned)time(NULL));
+    float mstweight = 0.0;
+    for (int i = 0; i < trials; i++) {
+        if (dim == 0) {
+            // can just make coords using random
+            float x[1];
+            float y[1];
+            float z[1];
+            float v[1];
 
-    //output
+            mstweight += primalg(x, y, z, v, n, dim);
+        }
+
+        if (dim == 2) {
+            float x[n];
+            float y[n];
+            float z[1];
+            float q[1];
+
+            // dim 2 coords
+            for (int j = 0; j < n; j++) {
+                x[j] = (float)rand() / RAND_MAX;
+                y[j] = (float)rand() / RAND_MAX;
+            }
+
+            mstweight += primalg(x, y, z, q, n, dim);
+
+        }
+
+        else if (dim == 3) {
+            float x[n];
+            float y[n];
+            float z[n];
+            float q[1];
+
+            // dim 3 coords
+            for (int j = 0; j < n; j++) {
+                x[j] = (float)rand() / RAND_MAX;
+                y[j] = (float)rand() / RAND_MAX;
+                q[j] = (float)rand() / RAND_MAX;
+            }
+
+            mstweight += primalg(x, y, z, q, n, dim);
+        }
+
+        else if (dim == 4) {
+            float x[n];
+            float y[n];
+            float z[n];
+            float q[n];
+
+            // dim 4 coords
+            for (int j = 0; j < n; j++) {
+                x[j] = (float)rand() / RAND_MAX;
+                y[j] = (float)rand() / RAND_MAX;
+                z[j] = (float)rand() / RAND_MAX;
+                q[j] = (float)rand() / RAND_MAX;
+            }
+
+            mstweight += primalg(x, y, z, q, n, dim);
+        }
+    }
+
     std::cout << mstweight / trials << " " << n << " " << trials << " " << dim << std::endl;
 
     return 0;
