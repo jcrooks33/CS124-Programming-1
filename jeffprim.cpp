@@ -1,7 +1,11 @@
+// Jeffs file for prims algorithm
+
 #include <iostream>
 #include <stdio.h>
 #include <math.h>
 #include "heap.hpp"
+
+
 
 /* Prims Algorithm in comment form 
 
@@ -34,62 +38,54 @@
 
                 add w and its distance to our heap
 */ 
-float Prim(float *x, float *y, float *z, float *q, int n, int dim) {
-    //make our variables
+float PrimAlg(float *x, float *y, float*z, float *q, int n, int dim) {
     float dist[n];
     int prev[n];
-    Node v = {-1, -1};
-    float mstweight = 0.0;
+    float sum = 0;
     int visited[n];
+    Node v = {-1, -1};
 
-    // we compute the optimal children value for the heap as well
-    int childval = n/8;
-    if (n == 131072) {
-        childval = n/16;
-    }
-    heap heap(n, childval);
-
-    for (int i = 1; i < n; i++) {
-
-        // initialize all the vertices to not visited
+    for (int i = 1; i < n; i++){
         visited[i] = 0;
-
-        // make value large enough to be larger than coords
         dist[i] = 10000;
     }
 
-    //start Prim's from the 1st vertex
     visited[0] = 1;
     dist[0] = 0;
 
-    heap.insert_elt(0, dist[0]);
+    // find child value for dheap
+    int child_value = n/8;
 
-    while (!heap.is_empty()) {
+    //initialize dheap
+    heap min_heap(n, child_value);
 
-        v = heap.DeleteMin(v);
+    //insert node 0
+    min_heap.insert_elt(0,dist[0]);
 
-        // visited
+    
+    while(!min_heap.is_empty()){
+
+        v = min_heap.DeleteMin(v);
+
+       
         visited[v.vertex] = 1;
-        mstweight += dist[v.vertex];
+        sum += dist[v.vertex];
 
-        // go through edges
         for (int j = 0; j < n; j++) {
             if (visited[j] == 0) {
-
                 int v1 = v.vertex;
                 int v2 = j;
-
                 float weight;
 
                 if (dim == 0) {
-                    weight = (float)rand() / RAND_MAX;
+                    weight = (float)rand()/RAND_MAX;
                 }
 
-                else if (dim == 2) {
+                if (dim == 2) {
                     weight = sqrt(pow(x[v1] - x[v2], 2.0) + (pow(y[v1] - y[v2], 2.0)));
                 }
 
-                else if (dim == 3) {
+                if (dim == 3) {
                     weight = sqrt(pow(x[v1] - x[v2], 2.0) + (pow(y[v1] - y[v2], 2.0)) + (pow(z[v1] - z[v2], 2.0)));
                 }
 
@@ -100,80 +96,76 @@ float Prim(float *x, float *y, float *z, float *q, int n, int dim) {
                 if (dist[j] > weight) {
                     dist[j] = weight;
                     prev[j] = v.vertex;
-                    heap.insert_elt(j, dist[j]);
+                    // insert j into heap
+                    min_heap.insert_elt(j, dist[j]);
                 }
             }
-        }
+        }      
     }
 
-    return mstweight;
+    return sum;
 }
 
+/* 
+    Since we are basing edge weight off of coordinates that are random 
+    we can compute them and then run prims alg 
+    So we will make a function to make random coordinates
+    then use those to run prims, and do this for each trial
+*/
 
-float primtrials(int n, int trials, int dim) {
+float Trials(int n, int trials, int dim) {
     srand((unsigned)time(NULL));
-    float mstweight = 0.0;
+    float sum = 0.0;
     for (int i = 0; i < trials; i++) {
         if (dim == 0) {
-            // no use to store coordinates, can compute on the fly
             float x[1];
             float y[1];
             float z[1];
-            float v[1];
+            float q[1];
 
-            mstweight += Prim(x, y, z, v, n, dim);
+            sum += PrimAlg(x, y, z, q, n, dim);
         }
-
         if (dim == 2) {
             float x[n];
             float y[n];
             float z[1];
             float q[1];
-
-            // initialize 2D coordinates
-            for (int a = 0; a < n; a++) {
-                x[a] = (float)rand() / RAND_MAX;
-                y[a] = (float)rand() / RAND_MAX;
+            for (int j = 0; j < n; j++){
+                x[j] = (float)rand() / RAND_MAX;
+                y[j] = (float)rand() / RAND_MAX;
             }
 
-            mstweight += Prim(x, y, z, q, n, dim);
-
+            sum += PrimAlg(x, y, z, q, n, dim);
         }
-
         else if (dim == 3) {
             float x[n];
             float y[n];
             float z[n];
             float q[1];
-
-            // initialize 3D coordinates
-            for (int a = 0; a < n; a++) {
-                x[a] = (float)rand() / RAND_MAX;
-                y[a] = (float)rand() / RAND_MAX;
-                q[a] = (float)rand() / RAND_MAX;
+            for (int j = 0; j < n; j++){
+                x[j] = (float)rand() / RAND_MAX;
+                y[j] = (float)rand() / RAND_MAX;
+                z[j] = (float)rand() / RAND_MAX;
             }
 
-            mstweight += Prim(x, y, z, q, n, dim);
+            sum += PrimAlg(x, y, z, q, n, dim);
         }
-
-        else if (dim == 4) {
+        else if (dim == 4){
             float x[n];
             float y[n];
             float z[n];
             float q[n];
-
-            // initialize 4D coordinates
-            for (int a = 0; a < n; a++) {
-                x[a] = (float)rand() / RAND_MAX;
-                y[a] = (float)rand() / RAND_MAX;
-                z[a] = (float)rand() / RAND_MAX;
-                q[a] = (float)rand() / RAND_MAX;
+            for (int j = 0; j < n; j++){
+                x[j] = (float)rand() / RAND_MAX;
+                y[j] = (float)rand() / RAND_MAX;
+                z[j] = (float)rand() / RAND_MAX;
+                q[j] = (float)rand() / RAND_MAX;
             }
 
-            mstweight += Prim(x, y, z, q, n, dim);
+            sum += PrimAlg(x, y, z, q, n, dim);
         }
     }
-    return mstweight;
+    return sum;
 }
 
 int main(int argc, const char * argv[]) {
@@ -183,17 +175,17 @@ int main(int argc, const char * argv[]) {
         return 1;
     }
 
-    // # of vertices, trials, and dimensions
+    // denotes # of vertices in the graph
     int n = atoi(argv[2]);
+
+    // how many times to calculate prim
     int trials = atoi(argv[3]);
+
+    // dimensions for the problem
     int dim = atoi(argv[4]);
 
-    //run prims
-    float mstweight = primtrials(n, trials, dim);
-
-    //output
-    std::cout << mstweight / trials << " " << n << " " << trials << " " << dim << std::endl;
+    float sum = Trials(n, trials, dim);
+    std::cout << (sum / trials) << " " << n << " " << trials << " " << dim << std::endl;
 
     return 0;
 }
-
