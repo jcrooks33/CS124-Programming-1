@@ -101,6 +101,8 @@ float primalg(float *x, float *y, float *z, float *q, int n, int dim) {
                     weight = sqrt(pow(x[v1] - x[v2], 2.0) + (pow(y[v1] - y[v2], 2.0)) + (pow(z[v1] - z[v2], 2.0)) + (pow(q[v1] - q[v2], 2.0)));
                 }
 
+                
+
                 if (dist[j] > weight) {
                     dist[j] = weight;
                     prev[j] = v.vertex;
