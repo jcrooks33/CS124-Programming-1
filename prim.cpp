@@ -61,16 +61,20 @@ float primalg(float *x, float *y, float *z, float *q, int n, int dim) {
     //start Prim's from the 1st vertex
     visited[0] = 1;
     dist[0] = 0;
+    float largest = -10;
 
     heap.insert_elt(0, dist[0]);
 
     while (!heap.is_empty()) {
 
         v = heap.DeleteMin(v);
-
+        
         // visited
         visited[v.vertex] = 1;
         mstweight += dist[v.vertex];
+
+        if (dist[v.vertex] > largest)
+            largest = dist[v.vertex];
 
         // go through edges
         for (int j = 0; j < n; j++) {
@@ -105,7 +109,7 @@ float primalg(float *x, float *y, float *z, float *q, int n, int dim) {
             }
         }
     }
-
+    std::cout << largest;
     return mstweight;
 }
 
